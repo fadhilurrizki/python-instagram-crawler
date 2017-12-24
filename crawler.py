@@ -25,10 +25,11 @@ def WriteDictToCSV(csv_file,csv_columns,dict_data):
                 writer.writerow(data)
 
 def main():
-	if(len(sys.argv) == 2):
+	if(len(sys.argv) == 3):
 		currentPath = os.getcwd()
 		# auth
 		access_token = str(sys.argv[1])
+		username = str(sys.argv[2])
 		print("Access Token : " + access_token)
 		print("Getting General Info..")
 		#get general info
@@ -36,7 +37,7 @@ def main():
 		general_info = requests.get(url_get).json()
 		flat = flattenjson(general_info['data'], "_")
 		columns = list(set(flat.keys()))
-		csv_file = currentPath + "/user-info.csv"
+		csv_file = currentPath + "/" + username + "-info.csv"
 		#WriteDictToCSV(csv_file,columns,[flat])
 		normalized = pd.io.json.json_normalize(general_info['data'])
 		normalized.to_csv(csv_file)
@@ -49,7 +50,7 @@ def main():
 		posts = requests.get(url_get).json()
 		flat = posts['data']
 		columns = list(set(flat[0].keys()))
-		csv_file = currentPath + "/user-posts.csv"
+		csv_file = currentPath + "/" + username + "-posts.csv"
 		#WriteDictToCSV(csv_file,columns,flat)
 		#with open('user_posts.json', 'w') as outfile:
 		#	json.dump(posts['data'],outfile) 
@@ -63,7 +64,7 @@ def main():
 			posts = requests.get(url_get).json()
 			flat = posts['data']
 			columns = list(set(flat[0].keys()))
-			csv_file = currentPath + "/likes/user-posts_" + id + ".csv"
+			csv_file = currentPath + "/likes/" + username + "-posts_" + id + ".csv"
 			#WriteDictToCSV(csv_file, columns, flat)
 			#with open(currentPath + '/likes/json/user_post_'+id+'.json', 'w') as outfile:
 			#	json.dump(posts['data'],outfile)
