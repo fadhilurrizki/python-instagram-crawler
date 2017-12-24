@@ -2,6 +2,8 @@ import requests
 import csv
 import os
 import sys
+import json
+import pandas as pd
 
 def flattenjson( b, delim ):
     val = {}
@@ -35,17 +37,24 @@ def main():
 		flat = flattenjson(general_info['data'], "_")
 		columns = list(set(flat.keys()))
 		csv_file = currentPath + "/user-info.csv"
-		WriteDictToCSV(csv_file,columns,[flat])
+		#WriteDictToCSV(csv_file,columns,[flat])
+		normalized = pd.io.json.json_normalize(general_info['data'])
+		normalized.to_csv(csv_file)
+		#with open('user_profile.json', 'w') as outfile:
+		#	json.dump(general_info['data'],outfile) 
 		print("done.")
 		#get recent posts
 		print("Getting Recent Posts...")
 		url_get = "https://api.instagram.com/v1/users/self/media/recent/?access_token=" + access_token + "&count=1000000"
 		posts = requests.get(url_get).json()
 		flat = posts['data']
-		columns = list(set(flat[3].keys()))
-		csv_file = currentPath + "/posts/user-posts.csv"
-		WriteDictToCSV(csv_file,columns,flat)
-
+		columns = list(set(flat[0].keys()))
+		csv_file = currentPath + "/user-posts.csv"
+		#WriteDictToCSV(csv_file,columns,flat)
+		#with open('user_posts.json', 'w') as outfile:
+		#	json.dump(posts['data'],outfile) 
+		normalized = pd.io.json.json_normalize(posts['data'])
+		normalized.to_csv(csv_file)
 		#get user likes of post
 		print("Getting User likes of posts...")
 		ids = [x['id'] for x in flat]
@@ -55,7 +64,12 @@ def main():
 			flat = posts['data']
 			columns = list(set(flat[0].keys()))
 			csv_file = currentPath + "/likes/user-posts_" + id + ".csv"
-			WriteDictToCSV(csv_file, columns, flat)
+			#WriteDictToCSV(csv_file, columns, flat)
+			#with open(currentPath + '/likes/json/user_post_'+id+'.json', 'w') as outfile:
+			#	json.dump(posts['data'],outfile)
+			normalized = pd.io.json.json_normalize(posts['data'])
+			normalized.to_csv(csv_file)
 	else :
 		print("access token not found. try again 'python3 crawler.py ACCESS_TOKEN'")
+
 if __name__ == "__main__": main()
