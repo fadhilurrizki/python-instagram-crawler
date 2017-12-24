@@ -10,4 +10,4 @@ How to Use :
 2. Clone This Repository
 3. Move to project directory : `cd python-instagram-crawler`
 4. Install requirements.txt : `sudo pip3 install -r requirements.txt`
-4. Run the script : `python3 crawler.py [ACCESS_TOKEN]`
+4. Run the script : `python3 crawler.py [ACCESS_TOKEN] [USERNAME]`

@@ -65,11 +65,17 @@ def main():
 			flat = posts['data']
 			columns = list(set(flat[0].keys()))
 			csv_file = currentPath + "/likes/" + username + "-posts_" + id + ".csv"
-			#WriteDictToCSV(csv_file, columns, flat)
-			#with open(currentPath + '/likes/json/user_post_'+id+'.json', 'w') as outfile:
-			#	json.dump(posts['data'],outfile)
+			
 			normalized = pd.io.json.json_normalize(posts['data'])
 			normalized.to_csv(csv_file)
+			url_get = "https://api.instagram.com/v1/media/" + id + "/comments?access_token=" + access_token
+			posts = requests.get(url_get).json()
+			flat = posts['data']
+			if(len(flat) != 0):
+				columns = list(set(flat[0].keys()))
+				csv_file = currentPath + "/comments/" + username + "-posts_" + id + ".csv"
+				normalized = pd.io.json.json_normalize(posts['data'])
+				normalized.to_csv(csv_file)
 	else :
 		print("access token not found. try again 'python3 crawler.py ACCESS_TOKEN'")
 
